@@ -9,10 +9,9 @@
 <meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
 
-<meta name="author" content="Peter Kramlinger" />
 
 
-<title>MCMC Credible Intervals</title>
+<title>credible_intervals.utf8</title>
 
 <script src="site_libs/header-attrs-2.5/header-attrs.js"></script>
 <script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
@@ -280,7 +279,7 @@ $(document).ready(function () {
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <a class="navbar-brand" href="index.html">Intro to MCMC Methods</a>
+      <a class="navbar-brand" href="index.html"></a>
     </div>
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
@@ -314,13 +313,12 @@ $(document).ready(function () {
 
 
 
-<h1 class="title toc-ignore">MCMC Credible Intervals</h1>
-<h4 class="author">Peter Kramlinger</h4>
-<h4 class="date">March 1st, 2021</h4>
 
 </div>
 
 
+<div id="section" class="section level2">
+<h2>—</h2>
 <hr />
 <p>This document provides an overview on MCMC credible interval estimation. It is intended to give a broad overview on different approaches and underlying principles. It is based on Eberly &amp; Casella (2003): Estimating Bayesian credible intervals and Chen (2000): Monte Carlo Methods in Bayesian Computation, Chapter 7.</p>
 <hr />
@@ -439,6 +437,7 @@ tibble(type = c(&quot;Simple&quot;, &quot;Optim&quot;, &quot;Chen-Shao&quot;),
 <p>So why bothering with simple (non-HPD) credible sets in the first place? Because, if the underlying posterior is not too skewed, the ordinary credible interval is close to the HPD set. Moreover, more robust estimation techniques are available for simple credible sets of the form <span class="math display">\[\begin{equation*}
   [\theta_{\alpha/2}, \theta_{1-\alpha/2}],
 \end{equation*}\]</span> with <span class="math inline">\(\Pi(\theta_{\alpha/2}|x) = \alpha/2\)</span> and <span class="math inline">\(\Pi(\theta_{1-\alpha/2}|x) = 1-\alpha/2\)</span>. A collection of such is given e.g. in Eberly &amp; Casella. Implemented versions thereof are given in the example XYZ.</p>
+</div>
 </div>
 
 
