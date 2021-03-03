@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+<meta name="author" content="Peter Kramlinger" />
+
+
+<title>Case Study I: Mixture Posterior Simulation</title>
+
+<script src="site_libs/header-attrs-2.5/header-attrs.js"></script>
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/bootstrap.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="site_libs/anchor-sections-1.0/anchor-sections.css" rel="stylesheet" />
+<script src="site_libs/anchor-sections-1.0/anchor-sections.js"></script>
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 51px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h2 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h3 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h4 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h5 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h6 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #ffffff;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Intro to MCMC Methods</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="metropolis-hastings.html">Intro to Metropolis-Hastings</a>
+</li>
+<li>
+  <a href="gibbs-intro.html">Motivation for Gibbs</a>
+</li>
+<li>
+  <a href="credible_intervals.html">Credible Intervals</a>
+</li>
+<li>
+  <a href="case1.html">Case Study I</a>
+</li>
+<li>
+  <a href="case2.html">Case Study II</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">Case Study I: Mixture Posterior Simulation</h1>
+<h4 class="author">Peter Kramlinger</h4>
+<h4 class="date">March 2nd, 2021</h4>
+
+</div>
+
+
+<hr />
+<p>This document gives an example on the implementation of a Gibbs sampler in a mixture model using completion. The data has been gathered from Ani Kannal from <a href="https://www.kaggle.com/anikannal/solar-power-generation-data">Kaggle</a>. It is merely a calculation example and not intended for interpretation. A detailed derivation and discussion of the problem is given in Robert &amp; Casella (2004): Monte Carlo Statistical Methods.</p>
+<hr />
+<div id="dimensionality-in-mixture-models" class="section level4">
+<h4>Dimensionality in Mixture Models</h4>
+<p>Consider a sample from a mixture of distributions, <span class="math display">\[\begin{equation*}
+    X_1, \dots, X_n \overset{iid.}{\sim} \sum_{j=1}^k p_j f(\;\cdot\;|\eta_j).
+\end{equation*}\]</span> As fundamental problem for such distributions, their joint density is given by <span class="math display">\[\begin{equation*}
+L(p, \eta| x)= \prod_{i=1}^n \sum_{j=1}^k p_j f(x_i|\eta_j),
+\end{equation*}\]</span> and contains <span class="math inline">\(k^n\)</span> terms if expanded. Standard maximisation techniques often fail to find the global maximum because of the multimodality of the joint likelihood.</p>
+<p>This issue is treated by a <em>missing data model</em>. Such involve the introduction of a latent indicator variable with <span class="math display">\[\begin{equation*}
+    \mathbf{Z} \sim \mathcal{M}_k(1; p), \qquad X_i|Z_i=z_i \sim f(\;\cdot\;|\eta_{z_i}).
+\end{equation*}\]</span> This ansatz is called <em>demarginalisation</em> or <em>completion</em>. Instead of treating the marginal density <span class="math inline">\(L(p, \eta| x)\)</span>, the density <span class="math display">\[\begin{equation*}
+  L(p, \eta| x, z) \propto \prod_{i=1}^n p_{z_i}f(x_i|\eta_{z_i})
+\end{equation*}\]</span> is considered, eliminating the mixture structure (cf. the connection to the slice sampler).</p>
+<hr />
+</div>
+<div id="pseudoconvergence-of-markov-chains" class="section level4">
+<h4>Pseudoconvergence of Markov Chains</h4>
+<p>To illustrate the problem in the case <span class="math inline">\(k=2\)</span>, with <span class="math inline">\(f(\cdot|\eta_i) \equiv \mathcal{N}(\mu_i, 1)\)</span>, let us first generate a sample according to the parameters:</p>
+<pre class="r"><code># parameters
+k &lt;- 2
+n &lt;- 100
+
+## true data
+set.seed(123)
+mu0 &lt;- c(0, 2.5)
+p0 &lt;- c(0.7, 0.3)</code></pre>
+<p>Now we can generate the sample <code>x</code> without using <code>k</code>. Note that the command sequence <code>mapply(function(..) sum(runif(1) &gt; cumsum(p0)) + 1, 1:n)</code> draws <code>n</code> realizations from the Multinomial distribution with parameter <code>p0</code>.</p>
+<pre class="r"><code>require(&#39;dplyr&#39;)
+z &lt;- mapply(function(..) sum(runif(1) &gt; cumsum(p0)) + 1, 1:n)
+x &lt;- rnorm(n, mu0[z])</code></pre>
+<p>The multimodal log-likelihood <span class="math inline">\(L(\eta| x)\)</span> is thus given by</p>
+<pre class="r"><code>loglik &lt;- function(mu1, mu2) sum(log(p0[1] * dnorm(x, mu1) + p0[2] * dnorm(x, mu2)))
+loglik &lt;- Vectorize(loglik, vectorize.args = &quot;mu1&quot;)</code></pre>
+<p>This log-likelihood is two-dimensional, so it can be plotted on <span class="math inline">\(\mu_0\in\mathbb{R}^2\)</span>:</p>
+<pre class="r"><code>grid &lt;- seq(4, -2, l = 100) #grid 
+LL.Surface &lt;- matrix(NA, ncol = 100, nrow = 100) #initialize surface
+colnames(LL.Surface) &lt;- rownames(LL.Surface) &lt;- grid #set names to use melt
+for (i in 1:100) LL.Surface[i,] &lt;- loglik(grid, grid[i]) #get surface values
+
+require(&#39;latex2exp&#39;)
+require(&#39;tidyverse&#39;)
+plt1 &lt;- ggplot(reshape::melt(LL.Surface)) + coord_fixed() + theme_classic() +
+  labs(y = TeX(&#39;$\\mu_2$&#39;), x = TeX(&#39;$\\mu_1$&#39;)) +
+  viridis::scale_fill_viridis() +
+  geom_raster(aes(X2, X1, fill = value), alpha = 0.8, show.legend = FALSE) +
+  geom_contour(aes(X2, X1, z = value), colour = &#39;black&#39;, size = 0.05, bins = 40)
+plt1 </code></pre>
+<p><img src="case1_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
+<p>This log-likelihood (for known <span class="math inline">\(p\)</span>) has two modes, one at <span class="math inline">\(\mu_0 = (0, 2.5)^t\)</span> at which the data was generated, but another one at <span class="math inline">\((1.5, -1)\)</span>. It is now clear why a standard maximization is vulnerable to find only the latter local maximum and fails to detect the higher mode <span class="math inline">\(\mu_0\)</span>.</p>
+<p>The positions diagonal to each other of the two modes above is particularly problematic. A Markov chain exploring the support parallel to the axes may fail to detect the multimodality of the likelihood. If the current state of the chain is in any of the modes, it cannot directly continue to the other mode, without first stepping into a low-probablity region.</p>
+<pre class="r"><code>plt1 + geom_segment(aes(x = 1.5 , y = -1, xend = 1.5, yend = 2.5), 
+                    size = 0.2, arrow = arrow(length = unit(0.1, &quot;cm&quot;))) +
+  geom_segment(aes(x = 1.5, y = 2.5, xend = 0, yend = 2.5), 
+                    size = 0.2, arrow = arrow(length = unit(0.1, &quot;cm&quot;))) </code></pre>
+<p><img src="case1_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
+<p>In order to pass from one mode to another, the chain has to move to a low-probability region of the density. This can take too long to detect pseudo convergence.</p>
+<p>Of course, the danger of failed convergence is not avoided using the concept of demarginalization. It seems natural that if a Markov chain is trapped in the lower mode, graphical tools do not help to diagnose failes convergence. Concepts like computing Riemann integrals are also not suitable for high dimensional problems like these. Instead it is advisable to initialize the Markov chain at different locations within the state space and interpret the convergence behavior.</p>
+<hr />
+</div>
+<div id="using-conjugacy" class="section level4">
+<h4>Using Conjugacy</h4>
+<p>Let us return to the concept of demargonalization. While the likelihood <span class="math inline">\(L(p, \eta| x, z)\)</span> obliterated the use of <span class="math inline">\(k\)</span> and thus simplified the problem, we can further ease computational burden, by choosing conjugate prior distributions. For <span class="math inline">\(f(\;\cdot\;|\eta)\)</span> belonging to the exponential family with <span class="math display">\[\begin{equation*}
+  f(x|\eta) = \exp\{ \eta^tT(x) - \kappa(\eta)\},
+\end{equation*}\]</span> the associated conjugate prior for <span class="math inline">\(\eta\)</span> is given by <span class="math display">\[\begin{equation*}
+  \pi(\eta|\alpha, n_0)
+  \propto \exp[ n_0\{\eta^t\alpha - \kappa(\eta)\}],
+  \qquad n_0\in\mathbb{R}, \alpha\in\mathcal{X}.
+\end{equation*}\]</span> Eventually, one can derive the posterior to be <span class="math display">\[\begin{equation*}
+  \pi(\eta|x, \alpha, n_0)
+  \propto \exp\{ \eta^t(n_0\alpha + n\bar{T}) - (n_0+n)\kappa(\eta)\}.
+\end{equation*}\]</span> An example is given by the conjugate prior for the multinomial distribution <span class="math inline">\(\mathcal{M}_k(1,p)\)</span>, namely the Dirichlet distribution, that is <span class="math display">\[\begin{equation*}
+  p \sim \mathcal{D}_k(\gamma),\qquad \gamma \in\mathbb{R}^k_{&gt;0}.
+\end{equation*}\]</span> The corresponding parameters of the posterior distributions can be determined, since they all are from the exponential family. This leads to a Gibbs algorithm in which <span class="math inline">\(Z\)</span>, <span class="math inline">\(\eta\)</span> and <span class="math inline">\(p\)</span> can be easily simulated as the corresponding full conditionals are available: For the latter two as they are chosen to be from the exponential family, and hence with known posteriors. The former reduces to a discrete random variable with full conditional is given by <span class="math display">\[\begin{equation*}
+P(Z_i=j| x, p , \eta ) = \frac{p_jf(x_i|\eta_j)}{\sum_{j=1}^k p_jf(x_i|\eta_j)}.
+\end{equation*}\]</span> One can simulate <span class="math inline">\(Z_i\in\{1, \dots, k\}\)</span> by</p>
+<pre class="r"><code>pvec &lt;- p * dnorm(x[i], mu) / sum(p * dnorm(x[i], mu))
+Z[i] &lt;- sum(runif(1) &gt; cumsum(pvec)) + 1</code></pre>
+<hr />
+</div>
+<div id="normal-inverse-gamma-hierarchy" class="section level4">
+<h4>Normal-Inverse-Gamma Hierarchy</h4>
+<p>We provide an example of such an algorithm. Consider the data set <code>Plant_1_Generation_Data.csv</code> on energy production of a solar plant in India. We are interested in the total yield of the plant, given by variable <code>TOTAL_YIELD</code>, which we assume to be distributed by a mixture of Gaussians:</p>
+<pre class="r"><code># read data 
+df &lt;- read.csv(file = &quot;Plant_1_Generation_Data.csv&quot;)
+n &lt;- length(df$TOTAL_YIELD)
+df &lt;- data.frame(x = seq(min(df$TOTAL_YIELD), max(df$TOTAL_YIELD), l = n),
+                y = df$TOTAL_YIELD / n ) # normalize for use later
+
+
+# plot data
+require(&quot;tidyverse&quot;)
+plt = ggplot(df) + theme_classic() + geom_histogram(aes(x = y * n, y = ..density..), bins = 40, alpha = 0.2) + 
+  labs( y = &#39;Normalized counts&#39;, x = &#39;Total yield of solar plant&#39;)
+plt</code></pre>
+<p><img src="case1_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
+<p>The data can be modelled to stem from a mixture of two or three Gaussians. We consider the hierarchy <span class="math display">\[\begin{align*}
+    \mu_j | \sigma_j^2, \delta_j, \lambda_j &amp;\sim \mathcal{N}\left( \delta_j, \frac{\lambda_j}{\sigma_j^2} \right), \qquad \delta_j\in \mathbb{R}, \lambda_j&gt;0;\\
+    \sigma_j^2 | \tau_j, \beta_j &amp;\sim \mathcal{IG}(\tau_j, \beta_j), \qquad\qquad \tau_j, \beta_j &gt;0.
+\end{align*}\]</span></p>
+<p>First, one has to verify that the joint prior <span class="math inline">\(\pi(\mu_j, \sigma_j^2)\)</span> is indeed in the exponential family. After some manipulations, one can find that this is the case and <span class="math display">\[\begin{equation*}
+    \alpha_j = \left(-\frac{\lambda_j\delta_j^2}{2}-\beta_j,  \lambda_j \delta_j ,  - \frac{\lambda_j}{2} , \tau_j + \frac{3}{2} \right)^t,
+    \qquad \eta_j
+    = \left(
+    \frac{1}{\sigma_j^2},
+    \frac{\mu_j}{\sigma_j^2},
+    \frac{\mu_j^2}{\sigma_j^2},
+    \ln \sigma_j^{-2}
+    \right)^t. 
+\end{equation*}\]</span> Consequently, the parameters of the posterior - indicated by the prime subscript - can be derived: <span class="math display">\[\begin{align*}
+  \tau_j&#39; &amp;= \tau_j + \frac{n_j}{2},\\
+  \lambda_j&#39; &amp;= \lambda_j + {n_j},\\
+  \delta_j&#39; &amp;= \frac{\lambda_j\delta_j + n_j\bar x_j}{\lambda_j + {n_j}},\\
+  \beta_j&#39; &amp;= \beta_j + \frac{1}{2} \sum_{i=1}^{n_j} (x_i - \bar x_j )^2 + \frac{1}{2} \frac{\lambda_j n_j}{\lambda_j + n_j} \left( \delta_j - \bar x_j \right)^2.
+\end{align*}\]</span> Eventually, the posterior densities are given as <span class="math display">\[\begin{align*}
+    \mu_j | x_j, \sigma_j^2, \delta_j, \lambda_j &amp;\sim \mathcal{N}\left( \delta_j&#39;, \frac{\lambda_j&#39;
+    }{\sigma_j^2} \right),\\
+    \sigma_j^2 | x_j, \tau_j, \beta_j, \lambda_j, \delta_j &amp;\sim \mathcal{IG}(\tau_j&#39;, \beta_j&#39;).
+  \end{align*}\]</span></p>
+<hr />
+<p>Now, the Normal-Inverse-Gibbs algorithm can be implemented. It takes the sample <code>x</code> and <code>k</code> as arguments as well as the length of the chain <code>M</code>.</p>
+<p>Initial values are obtained by binning the data in <code>k</code> bins and obtaining naive estimates which are used as initial values.</p>
+<p>The hyperparameter <span class="math inline">\(\gamma\)</span> is set to be equal to <span class="math inline">\(1/k\)</span> in each component and <code>lamdba = 10</code> to ensure a sufficiently spread out prior for <code>mu</code>.</p>
+<pre class="r"><code>MPGS.NIG &lt;- function(x, k, M = 5e2) {
+  
+  # load packages
+  require(&#39;MCMCpack&#39;) #for rdirichlet
+  
+  # parameters
+  n &lt;- length(x)
+  
+  # initial values  - bin and take adjusted probs, mean and sd
+  bin &lt;- seq(min(x) - 1, max(x) + 1, l = k + 1)
+  p &lt;- mapply(function(k) mean(x &gt; bin[k] &amp; x &lt;= bin[k + 1]), 1:k) 
+  mu &lt;- mapply(function(k) mean(x[x &gt; bin[k] &amp; x &lt;= bin[k + 1]]), 1:k)
+  sig &lt;- mapply(function(k) sd(x[x &gt; bin[k] &amp; x &lt;= bin[k + 1]]), 1:k)
+  
+  # hyperparams 
+  gamma &lt;- rep(1/k, k)
+  
+  delta &lt;- mu
+  lambda &lt;- 10
+  
+  alpha &lt;- sig
+  beta &lt;- rep(1,k)
+  
+  # initialize Markov chains
+  P &lt;- matrix(NA, M, k)
+  MU &lt;- matrix(NA, M, k)
+  SIG &lt;- matrix(NA, M, k)
+  
+  sdxj &lt;- c()
+  
+  # Gibbs sampler
+  for (m in 1:M) {
+    
+    # Step 1, draw Z
+    Z &lt;- mapply(function(i){
+      pvec = p * dnorm(x[i], mu, sig) / sum(p * dnorm(x[i], mu, sig)) #discrete probs for Z
+      Z &lt;- sum(runif(1) &gt; cumsum(pvec)) + 1 #draw from P(Z=j), j = 1, ... , k)
+    }, 1:n)
+    
+    # calculate values necessary for the remaining posteriors
+    nj &lt;- table(factor(Z, 1:k))
+    xj &lt;- c(); for (i in 1:k) xj[i] = sum(x[Z == i])
+    
+    # only calc sd if a at least one obs is present - otherwise an error will occur
+    for (i in 1:k) if (!is.na(sd(x[Z == i]))) sdxj[i] = (nj[i] - 1) * sd(x[Z == i])
+    
+    # Step 2 - compute the remaining posteriors
+    p &lt;- rdirichlet(1, gamma + nj) #redraw p
+
+    alpha.n &lt;- alpha + nj / 2
+    beta.n &lt;- beta + sdxj / 2 + nj * lambda / (lambda + nj) * (xj/nj - delta)**2 / 2
+    delta.n &lt;- (lambda * delta + xj) / (nj + lambda)
+    lambda.n &lt;- lambda + nj
+    
+    # draw from the posteriors
+    sig &lt;- rgamma(k, alpha.n, beta.n) ** -.5
+    mu &lt;- rnorm(k, delta.n, sig / lambda.n**.5 )
+    
+    
+    P[m,] &lt;- p
+    MU[m,] &lt;- mu
+    SIG[m,] &lt;- sig #this is the variance, not standard deviation
+  }
+  
+  # return the Bayes estimates under squared error loss
+  
+  return(mapply(&#39;colMeans&#39;, list(p = P, mu = MU, var = SIG))) 
+}</code></pre>
+<hr />
+<p>The task is computationally challenging, we thus run the algorithm on a subsample only.</p>
+<pre class="r"><code>df &lt;- df[sample(1:n, 1000) , ] 
+MC.2 &lt;- MPGS.NIG(df$y, 2) #two modes</code></pre>
+<pre><code>## Loading required package: MCMCpack</code></pre>
+<pre><code>## Loading required package: coda</code></pre>
+<pre><code>## Loading required package: MASS</code></pre>
+<pre><code>## 
+## Attaching package: &#39;MASS&#39;</code></pre>
+<pre><code>## The following object is masked from &#39;package:dplyr&#39;:
+## 
+##     select</code></pre>
+<pre><code>## ##
+## ## Markov Chain Monte Carlo Package (MCMCpack)</code></pre>
+<pre><code>## ## Copyright (C) 2003-2021 Andrew D. Martin, Kevin M. Quinn, and Jong Hee Park</code></pre>
+<pre><code>## ##
+## ## Support provided by the U.S. National Science Foundation</code></pre>
+<pre><code>## ## (Grants SES-0350646 and SES-0350613)
+## ##</code></pre>
+<pre class="r"><code>MC.3 &lt;- MPGS.NIG(df$y, 3) #three modes
+MC.4 &lt;- MPGS.NIG(df$y, 4) #three modes</code></pre>
+<p>We can verify that the resulting Markov chains indeed seem to thoroughly sweep over the state space.</p>
+<p>Below, we compute the Bayes estimates and plot the fitted models on the histogram. <code>fit</code> is the respective Gaussian fit, by applying the Bayes estimates to the model equation.</p>
+<pre class="r"><code>fit &lt;- function(param) rowSums(apply(param, 1, function(a) a[1] * dnorm( df$x , n * a[2] , n * a[3] ** .5)))
+
+df &lt;- data.frame(x = df$x, y2 = fit(MC.2), y3 = fit(MC.3), y4 = fit(MC.4))
+df &lt;- reshape::melt(df, id = &quot;x&quot;) 
+
+plt + geom_line(data = df, aes(x, value, color = variable)) + 
+  scale_color_discrete(name = &quot;&quot;, labels = c(&quot;k=2&quot;, &quot;k=3&quot;, &quot;k=4&quot;))</code></pre>
+<p><img src="case1_files/figure-html/unnamed-chunk-10-1.png" width="672" /></p>
+<p>While the MCMC Bayes estimates produce good fits in the model framework, the tail behavior indicates that a Gaussian assumption is unjustified in the first place.</p>
+</div>
+
+
+
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

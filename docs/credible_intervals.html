@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+<meta name="author" content="Peter Kramlinger" />
+
+
+<title>MCMC Credible Intervals</title>
+
+<script src="site_libs/header-attrs-2.5/header-attrs.js"></script>
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/bootstrap.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="site_libs/anchor-sections-1.0/anchor-sections.css" rel="stylesheet" />
+<script src="site_libs/anchor-sections-1.0/anchor-sections.js"></script>
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 51px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h2 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h3 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h4 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h5 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h6 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #ffffff;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Intro to MCMC Methods</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="metropolis-hastings.html">Intro to Metropolis-Hastings</a>
+</li>
+<li>
+  <a href="gibbs-intro.html">Motivation for Gibbs</a>
+</li>
+<li>
+  <a href="credible_intervals.html">Credible Intervals</a>
+</li>
+<li>
+  <a href="case1.html">Case Study I</a>
+</li>
+<li>
+  <a href="case2.html">Case Study II</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">MCMC Credible Intervals</h1>
+<h4 class="author">Peter Kramlinger</h4>
+<h4 class="date">March 1st, 2021</h4>
+
+</div>
+
+
+<hr />
+<p>This document provides an overview on MCMC credible interval estimation. It is intended to give a broad overview on different approaches and underlying principles. It is based on Eberly &amp; Casella (2003): Estimating Bayesian credible intervals and Chen (2000): Monte Carlo Methods in Bayesian Computation, Chapter 7.</p>
+<hr />
+<div id="definitions-of-credible-sets" class="section level4">
+<h4>Definitions of Credible Sets</h4>
+<p>In Bayesian inference, an analogon of frequentist <em>confidence sets</em> is given by credible sets. While the data is the realization of the random process in the former, the latter considers the underlying parameter to be random, and the data fixed.</p>
+<p>Formally, let <span class="math inline">\(X\sim f(\;\cdot\;|\theta)\)</span> a sample from a distribution dependent on <span class="math inline">\(\theta\in\Theta\)</span>, and <span class="math inline">\(\theta\sim\pi\)</span>. For any <span class="math inline">\(\alpha\in(0,1)\)</span>, a <em>level <span class="math inline">\(1-\alpha\)</span> credible set</em> for <span class="math inline">\(\theta\)</span> is any <span class="math inline">\(C(x)\in\mathcal{B}(\Theta)\)</span> with <span class="math display">\[\begin{equation*}
+  P_{\theta|x}\{\theta\in C(x)\} = \int_{C(x)}\pi(\theta|x)\;d\theta
+  \geq 1- \alpha.
+\end{equation*}\]</span> A <em>level <span class="math inline">\(1-\alpha\)</span> highest posteriori density (HPD) credible set</em> <span class="math inline">\(C(x)\)</span> for <span class="math inline">\(\theta\)</span> is defined by <span class="math display">\[\begin{equation*}
+  C(x) = \{ \theta\;|\; \pi(\theta|x) \geq c_\alpha\},
+\end{equation*}\]</span> where <span class="math inline">\(c_\alpha\)</span> is the largest constant such that <span class="math inline">\(P_{\theta|x}\{\theta\in C(x)\} \geq 1-\alpha\)</span>.</p>
+<p>These definitions are intuitively understood: While a posterior exhibits many credible sets, most of them are not useful since they include areas in which the posterior has little mass. Instead, it is a desirable property to first include those areas in which most mass is present until the desired level is attained. This is the essence of the HPD credible set.</p>
+<hr />
+</div>
+<div id="difference-of-hpd-and-simple-credible-sets" class="section level4">
+<h4>Difference of HPD and Simple Credible Sets</h4>
+<p>Consider the Beta-Binomial hierarchy given by <span class="math display">\[\begin{align*}
+  X|p &amp;\sim B(n,p),\\
+  p &amp;\sim Beta(a,b). 
+\end{align*}\]</span> It is easy to see that <span class="math inline">\(p | x \sim Beta( a + x, b + n - x)\)</span>.</p>
+<p>For some selected parameters, a naive 95%-credible interval can be readily calculated:</p>
+<pre class="r"><code># set prior and likelihood parameters
+alpha &lt;- 0.05 
+n &lt;- 5
+a &lt;- b &lt;- 0.5
+x &lt;- 2
+
+# set posterior parameters
+a.star &lt;- a + x
+b.star &lt;- b + n - x
+
+# the naive credible interval is given by 
+CI1 &lt;- qbeta(c(alpha/2, 1 - alpha/2), a.star, b.star)</code></pre>
+<p>In order to compute the HPD credible interval, an optimization problem which is equivalent to the definition above has to be solved.</p>
+<pre class="r"><code># the HPD credible interval is the minimizer or
+Q &lt;- function(arg, a0 = alpha, a = a.star, b = b.star) {
+  abs(dbeta(arg[2], a, b) - dbeta(arg[1], a, b)) + 
+    abs(pbeta(arg[2], a, b) - pbeta(arg[1], a, b) - (1 - a0))
+}
+CI2 = optim(c(0.2,0.7), Q,
+            lower = c(0,0), 
+            upper = c(1,1), 
+            method = &quot;L-BFGS-B&quot;)$par</code></pre>
+<p>In this particular instance, we may somewhat trust the <code>integrate</code>-function and compare both intervals.</p>
+<pre class="r"><code># both sets yield the same coverage
+integrate(&quot;dbeta&quot;, CI1[1], CI1[2], shape1 = a.star, shape2 = b.star)</code></pre>
+<pre><code>## 0.95 with absolute error &lt; 7.1e-11</code></pre>
+<pre class="r"><code>integrate(&quot;dbeta&quot;, CI2[1], CI2[2], shape1 = a.star, shape2 = b.star)</code></pre>
+<pre><code>## 0.9500096 with absolute error &lt; 3.8e-10</code></pre>
+<pre class="r"><code># but not the same length
+diff(CI1)</code></pre>
+<pre><code>## [1] 0.696193</code></pre>
+<pre class="r"><code>diff(CI2)</code></pre>
+<pre><code>## [1] 0.6914237</code></pre>
+<p>While their coverage probabilities coincide, their positions - and thus their lengths - do not. This is visualized by plotting the sets.</p>
+<pre class="r"><code># plot
+require(&quot;ggplot2&quot;)
+require(&quot;latex2exp&quot;)
+p &lt;- seq(0, 1, length = 1000)
+f &lt;- function(p) dbeta(p, a.star, b.star) #posterior
+ggplot() + theme_classic() + 
+  labs(y = unname(TeX(&quot;$\\pi(p|x)$&quot;)), x = &quot;p&quot;) +
+  geom_line(aes(x = p, y = f(p))) + 
+  stat_function(fun = f, 
+                geom = &quot;area&quot;, 
+                xlim = CI1, fill = &quot;#f8766d&quot;, alpha = 0.2) + 
+  stat_function(fun = f, 
+                geom = &quot;area&quot;, 
+                xlim = CI2, fill = &quot;#00bfc4&quot;, alpha = 0.2) + 
+  geom_hline(yintercept = f(CI2[1]), linetype = &quot;dashed&quot;)</code></pre>
+<p><img src="credible_intervals_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
+<p>The naive credible set (red) is narrowly larger than the HPD (blue) set. Since it misses some mass-rich area on the left of the mode, it has to make up for it by including more areas at the right tail of the target density. The more skewed the posterior to the right, the more pronounced this effect will be. On the contrary, since the posterior <span class="math inline">\(f\)</span> is continuous, the HPD set <span class="math inline">\([l,u]\)</span>, <span class="math inline">\(l,u&gt;0\)</span> has the property that <span class="math inline">\(f(l) = f(u)\)</span>. This is indicated by the dashed line.</p>
+<hr />
+</div>
+<div id="chen-shao-hpd-estimation-algorithm" class="section level4">
+<h4>Chen-Shao HPD Estimation Algorithm</h4>
+<p>Because in Bayesian computation, usually no analytic representation of the posterior is available. The HPD credible interval can be estimated without the explicit knowledge of the posterior by using the MCMC sample.</p>
+<p>An (artificial) example is given as follows. First, lets generate a sample that coincides with the values of the Beta-Binomial hierarchy above.</p>
+<pre class="r"><code># generate data
+N &lt;- 200
+n &lt;- 5
+p &lt;- 0.396
+set.seed(123)
+x &lt;- rbinom(N, n, p) #sample</code></pre>
+<p>We generate our Markov chain by sampling from the posterior directly. In practice, the MCMC sample would be generated by full conditionals.</p>
+<pre class="r"><code># generate MCMC sample
+M &lt;- 1e5 #length of Markov chain
+theta &lt;- rbeta(M, a.star, b.star) #MCMC sample</code></pre>
+<p>The Chen-Shao algorithm chooses the shortest estimated credible sets amongst all order statistics based credible sets that meet nominal coverage.</p>
+<pre class="r"><code># chen shao
+theta &lt;- sort(theta) # order the MCMC sample
+M.cand &lt;- round(M*(1 - alpha)) # number of candidate HPDs
+C &lt;- matrix(NA, nrow = (M - M.cand), ncol = 2) 
+for (i in 1:(M - M.cand)) C[i,1:2] = c(theta[i], theta[i + M.cand])
+diffC &lt;- apply(C, 1, &quot;diff&quot;) #lengths of candidate intervals
+idx &lt;- which.min(diffC) 
+CI3 &lt;- C[idx,] # Chen-Shao HPD </code></pre>
+<p>Now, we compare the obtained Chen-Shao HPD credible set with the analytical credible sets computed earlier.</p>
+<pre class="r"><code>require(&quot;tidyverse&quot;)
+tibble(type = c(&quot;Simple&quot;, &quot;Optim&quot;, &quot;Chen-Shao&quot;), 
+       lower = c(CI1[1], CI2[1], CI3[1]),
+       upper = c(CI1[2], CI2[2], CI3[2]),
+       diff = c(diff(CI1), diff(CI2), diff(CI3)))</code></pre>
+<pre><code>## # A tibble: 3 x 4
+##   type       lower upper  diff
+##   &lt;chr&gt;      &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+## 1 Simple    0.0944 0.791 0.696
+## 2 Optim     0.0768 0.768 0.691
+## 3 Chen-Shao 0.0744 0.766 0.692</code></pre>
+<p>Although the Chen-Shao set depends only the MCMC sample, the estimated credible interval coincides with the analytical HPD credible set. It is important to emphasize that it is usually not possible to obtain the latter via solving the optimization problem above, since the analytic representation of the posterior is often not available. In such cases, the Chen-Shao algorithm offers a simple way to obtaining HPD credible intervals.</p>
+<hr />
+</div>
+<div id="an-argument-for-naive-credible-sets" class="section level4">
+<h4>An Argument for Naive Credible Sets</h4>
+<p>So why bothering with simple (non-HPD) credible sets in the first place? Because, if the underlying posterior is not too skewed, the ordinary credible interval is close to the HPD set. Moreover, more robust estimation techniques are available for simple credible sets of the form <span class="math display">\[\begin{equation*}
+  [\theta_{\alpha/2}, \theta_{1-\alpha/2}],
+\end{equation*}\]</span> with <span class="math inline">\(\Pi(\theta_{\alpha/2}|x) = \alpha/2\)</span> and <span class="math inline">\(\Pi(\theta_{1-\alpha/2}|x) = 1-\alpha/2\)</span>. A collection of such is given e.g. in Eberly &amp; Casella. Implemented versions thereof are given in the example XYZ.</p>
+</div>
+
+
+
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

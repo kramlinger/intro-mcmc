@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+<meta name="author" content="Peter Kramlinger" />
+
+
+<title>Motivation for Gibbs Sampling</title>
+
+<script src="site_libs/header-attrs-2.5/header-attrs.js"></script>
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/bootstrap.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="site_libs/anchor-sections-1.0/anchor-sections.css" rel="stylesheet" />
+<script src="site_libs/anchor-sections-1.0/anchor-sections.js"></script>
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 51px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h2 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h3 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h4 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h5 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h6 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #ffffff;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Intro to MCMC Methods</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="metropolis-hastings.html">Intro to Metropolis-Hastings</a>
+</li>
+<li>
+  <a href="gibbs-intro.html">Motivation for Gibbs</a>
+</li>
+<li>
+  <a href="credible_intervals.html">Credible Intervals</a>
+</li>
+<li>
+  <a href="case1.html">Case Study I</a>
+</li>
+<li>
+  <a href="case2.html">Case Study II</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">Motivation for Gibbs Sampling</h1>
+<h4 class="author">Peter Kramlinger</h4>
+<h4 class="date">March 1st, 2021</h4>
+
+</div>
+
+
+<hr />
+<p>This document provides some code outlining the motivation for Gibbs sampling. It is intended to give a basic understanding on fundamental principles. The theoretical derivation, involved examples and applications can be found in Robert &amp; Casella (2004): Monte Carlo Statistical Methods.</p>
+<hr />
+<div id="the-slice-sampler" class="section level4">
+<h4>The Slice Sampler</h4>
+<p>A slice sampler obtains a sample from a density (or a function proportional thereof) by evaluating a random walk in the area below the curve. The random walk is generated by successively drawing a uniformly distributed random variable from the slices parallel to the vertical and horizontal axes. This is visualized below. Specifically, consider the following case in which we sample from <span class="math inline">\(g(x) = e^{-\sqrt{x}}/4\)</span>. Note that only <span class="math inline">\(f = 2g\)</span> is a proper density.</p>
+<pre class="r"><code>g &lt;- function(x) exp(-sqrt(x)) / 4 #density up to constant 2 
+f &lt;- function(x) 2 * g(x) #true density</code></pre>
+<p>In order to run the slice sampler, the horizontal slice has to be obtained analytically. This requires inverting <code>g</code>, which yields <span class="math display">\[\begin{equation*}
+  g^{-1}(y) = \ln(4y)^2.
+\end{equation*}\]</span> The algorithm is thus given by:</p>
+<pre class="r"><code>N &lt;- 1e5 #length of random walk
+X &lt;- c(1) #starting value
+for (n in 1:N) {
+  Y &lt;- runif(1, 0, g(X[n])) #vertical slice
+  X[n + 1] &lt;- runif(1) * log(4 * Y) ** 2 #horizontal slice
+}
+
+require(&quot;tidyverse&quot;)
+df &lt;- tibble(x = seq(0, 15, l = 1e3), g = g(x), f = f(x))
+df &lt;- gather(df, f, g, key = &quot;col&quot;, value = &quot;val&quot;)
+ggplot() + theme_classic() + labs(y = &#39;&#39;, x = &#39;&#39;, color = &#39;&#39;) +
+  geom_histogram(aes(X[X &lt; 15], y = ..density..), alpha = 0.2) +
+  geom_line(data = df, aes(x, val, colour = col))</code></pre>
+<p><img src="gibbs-intro_files/figure-html/slice_run-1.png" width="672" /></p>
+<p>The sampler only relies on <span class="math inline">\(g\)</span>, yet produces a good approximation of <span class="math inline">\(f\)</span>. Notably, the left boundary is not as often explored by the chain as it should by theoretical density. Clearly, this is due to the slice sampler only advancing parallel to the axes. In cases like these, convergence usually takes longer.</p>
+<hr />
+</div>
+<div id="relation-to-metropolis-hastings" class="section level4">
+<h4>Relation to Metropolis-Hastings</h4>
+<p>Why would one employ the slice sampler, when samples of <span class="math inline">\(f\)</span> can readily generated by a Metropolis-Hastings algorithm instead? One reason is that whilst the slice sample requires only the inversion of the target, a good implementation of a Metropolis-Hastings algorithm relies on a well-chosen proposal density. The search for such a proposal may be prohibitively expensive.</p>
+<p>Consider the following example, where samples are to be generated from <span class="math display">\[\begin{equation*}
+  \mathcal{N}(3,1)\cdot\mathbb{I}_{(0,1)}. 
+\end{equation*}\]</span> A seemingly natural, but flawed proposal is given by using the density of <span class="math inline">\(\mathcal{N(3,1)}\)</span>. This gives the (independent) Metropolis-Hastings algorithm as follows:</p>
+<pre class="r"><code>f &lt;- function(x) dnorm(x, 3, 1) * (0 &lt;= x &amp; x &lt;= 1) #truncated normal
+q &lt;- function(x) dnorm(x, 3, 1) #proposal density
+
+c = 1 / (pnorm(1,3,1) - pnorm(0,3,1)) #normalizing constant
+g &lt;- function(x) dnorm(x, 3, 1) * c #true density
+
+rho &lt;- function(x, y) f(y) / f(x) * q(x) / q(y) #acceptance probability
+
+N &lt;- 1e4 #length of chain
+Y &lt;- rnorm(N, 3, 1) #draw from proposal 
+
+X &lt;- c(0.5) #initial value of Markov chain
+for (n in 1:N) {
+  if (runif(1) &lt; rho(X[n],Y[n])) X[n + 1] = Y[n] #accept with rho
+  else X[n + 1] &lt;- X[n] #reject with 1-rho
+}
+
+ggplot() + theme_classic() + labs(y = &#39;&#39;, x = &#39;&#39;, color = &#39;&#39;) +
+  geom_histogram(aes(X, y = ..density..), alpha = 0.2) +
+  stat_function(fun = function(x) f(x), color = &quot;#f8766d&quot;) + 
+  stat_function(fun = function(x) g(x), color = &quot;#00bfc4&quot;)  </code></pre>
+<p><img src="gibbs-intro_files/figure-html/trunc.norm.mh-1.png" width="672" /></p>
+<p>The true density (blue) is not approximately well enough. This is due to the proposals generated on the whole of <span class="math inline">\(\mathbb{R}\)</span>, but only accepted if they lie in <span class="math inline">\(\mathbb{I}_{(0,1)}\)</span>. Hence, only a small fraction, namely <code>pnorm(1, 3, 1) - pnorm(0, 3, 1) = 0.0214</code> of all samples are not discarded. This is highly inefficient. To mitigate this problem, the proposal choice must be carefully revisited.</p>
+<p>In scenarios like these, the slice sampler can offer a simple solution. First, we need to obtain the lower horizontal slice. Inverting, we obtain <span class="math display">\[\begin{equation*}
+  f^{-1}(y) = 3 \pm \sqrt{-2y\ln(\sqrt{2\pi})}, 
+\end{equation*}\]</span> and considering the monotonous increasing nature of the target density, the slice can be derived as <span class="math display">\[\begin{equation*}
+  \left\{ 3 - \sqrt{-2y\ln(\sqrt{2\pi})}, 1 \right\}. 
+\end{equation*}\]</span></p>
+<p>The slice sampler is thus readily implemented.</p>
+<pre class="r"><code>set.seed(123)
+
+N &lt;- 1e4 #length of chain
+X &lt;- c(0.2) #initial value of the chain
+Y &lt;- c() #vertical slice
+for (n in 1:N) {
+  Y[n] &lt;- runif(1) * f(X[n]) #vertical slice
+  X[n + 1] &lt;- runif(1, max(3 - sqrt(-2 * log(sqrt(2 * pi) * Y[n])), 0), 1) #horiz. slice
+}
+
+plt = ggplot() + theme_classic() + labs(y = &#39;&#39;, x = &#39;&#39;, color = &#39;&#39;) +
+  geom_histogram(aes(X, y = ..density..), alpha = 0.2, bins = 100) +
+  stat_function(fun = function(x) f(x), color = &quot;#f8766d&quot;) + 
+  stat_function(fun = function(x) g(x), color = &quot;#00bfc4&quot;)  
+plt</code></pre>
+<p><img src="gibbs-intro_files/figure-html/unnamed-chunk-1-1.png" width="672" /></p>
+<p>Clearly, the slice sampler makes use of running the chain only on <span class="math inline">\(\mathbb{I}_{(0,1)}\)</span>, and is much more efficient than the Metropolis-Hasting algorithm above (note that both algorithms generate in total <code>N = 1e4</code> samples both.</p>
+<p>The nature of the slice sampler can be visualized by plotting its first couple of steps.</p>
+<pre class="r"><code>m &lt;- 12 #number of steps
+
+plt +
+  geom_point(aes(x = X[1:(m + 1)], y = c * Y[1:(m + 1)]), alpha = 0.3) +
+  geom_point(aes(x = X[2:(m + 1)], y = c * Y[1:m]), alpha = 0.3) +
+  geom_segment(aes(
+    x = X[1:m],
+    y = c * Y[1:m],
+    xend = X[2:(m + 1)],
+    yend = c * Y[1:m]
+  ),
+  arrow = arrow(length = unit(0.2, &quot;cm&quot;))) +
+  geom_segment(aes(
+    x = X[2:(m + 1)],
+    y = c * Y[1:m],
+    xend = X[2:(m + 1)],
+    yend = c * Y[2:(m + 1)]
+  ),
+  arrow = arrow(length = unit(0.2, &quot;cm&quot;))) </code></pre>
+<p><img src="gibbs-intro_files/figure-html/unnamed-chunk-2-1.png" width="672" /></p>
+<p>This representations makes clear how the random walk will remain at places where the underlying density exhibits a lot of mass.</p>
+<hr />
+</div>
+<div id="dependency-on-initial-values" class="section level4">
+<h4>Dependency on initial values</h4>
+<p>In the example above the initial value has been set by <code>X &lt;- 0.2</code>. Remarkably, the slice sampler is very robust when it comes to the choice of initial values.</p>
+<p>Below, let three random walks start at different values <code>0.01</code>, <code>0.5</code> and <code>0.99</code>.</p>
+<pre class="r"><code>set.seed(123)
+N &lt;- 20 #length of chain
+X &lt;- U &lt;- matrix(NA, nrow = N, ncol = 3)
+
+Vh &lt;- runif(N) #use the same uniform random variables for the horizontal slice 
+Vv &lt;- runif(N) #use the same uniform random variables for the vertical slice  
+
+X[1,] &lt;- c(0.01, 0.5, 0.99) # initial values for horizontal slice
+U[1,] &lt;- Vh[1] * f(X[1,]) #first vertical slice
+
+for (n in 2:N) {
+  
+  shift &lt;- pmax(3 - sqrt(-2 * log(sqrt(2 * pi) * U[n - 1, ])), 0)
+  X[n, ] &lt;- Vv[n] * (1 - shift) + shift #horizontal slice
+  U[n, ] &lt;- Vh[n] * f(X[n, ]) #vertical slice
+  
+}
+
+
+#plot results
+df = tibble(x = c(X), y = c(U), group = rep(X[1,], each = N))
+ggplot(df) + theme_classic() + labs(y = &#39;&#39;, x = &#39;&#39;, color = &#39;&#39;) +
+  stat_function(fun = function(x) f(x), color = &quot;#f8766d&quot;) + 
+  stat_function(fun = function(x) g(x), color = &quot;#00bfc4&quot;) + 
+geom_point(aes(x = x, y = c * y), alpha = 0.3) +
+  geom_point(aes(x = group, y = c * Vh[1] * f(group)), colour = &quot;black&quot;, alpha = 0.3) + 
+  facet_wrap(~as.factor(group))</code></pre>
+<p><img src="gibbs-intro_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
+<p>The solid black dot represents the first generated random variable. The plot highlights that although the initial values were quite different, the resulting samples are pretty similar.</p>
+<hr />
+</div>
+<div id="the-gibbs-sampler" class="section level4">
+<h4>The Gibbs Sampler</h4>
+<p>Finally, we turn to the algorithm motivated by the slice sampler - the Gibbs Sampler. Instead of taking the axes as directions in which the random walk is exploring, conditional densities of the target density are considered instead.</p>
+<p>In the example below, a sample is drawn from <span class="math display">\[\begin{equation*}
+  \mathcal{N}_2\left(0_2, \begin{pmatrix}1&amp;\rho\\\rho&amp;1\end{pmatrix}\right). 
+\end{equation*}\]</span> The full conditional for the second component, that is the distribution of the second component given the first, is obtained after some calculations <span class="math display">\[\begin{equation*}
+  Y_{n+1} | X_n = x_n \sim \mathcal{N}(\rho x_n, 1-\rho^2).
+\end{equation*}\]</span> The converse holds true for the full conditional of the first component. This give the Gibbs Sampler as follows:</p>
+<pre class="r"><code>set.seed(123)
+rho &lt;- 0.8
+
+N &lt;- 1e4 #length of chain
+X &lt;- c(0); Y &lt;- c() #initial values
+
+for (n in 1:N) {
+  Y[n] = rnorm(1, rho * X[n], (1 - rho ** 2) ** .5)
+  X[n + 1] = rnorm(1, rho * Y[n], (1 - rho ** 2) ** .5)
+}</code></pre>
+<p>While it might not be easy to draw from the target density directly, drawing from two normals is made easy in .</p>
+<p>The resulting Markov chains’ first couple of iterations (red) indicate their connection to the slice sampler: The sample of the two-dimensional density is generated by generating from each full conditional at a time.</p>
+<pre class="r"><code># plot results
+require(&#39;tidyverse&#39;)
+require(&#39;ellipse&#39;)
+require(&#39;RColorBrewer&#39;)
+
+#true distribution
+SIG = matrix(c(1, rho, rho, 1), 2, 2) #true covariance matrix
+df.conf = as_tibble(do.call(&#39;rbind&#39;, mapply(
+  function(z) cbind(ellipse(SIG, level = z), z), seq(.1, .9, .1), SIMPLIFY = F
+))) # ellipsoids of true distribution
+
+#generated sample
+df = tibble(x = X[1:n], y = Y)
+df.path = tibble(x = c(df$x[1], rep(df$x[2:10], each = 2)),
+                 y = c(rep(df$y[1:9], each = 2), df$y[10]))
+
+ggplot(df, aes(x, y)) + theme_classic() +
+  guides(color = FALSE) + scale_color_brewer() + 
+  geom_point(alpha = 0.05) +
+  geom_path(data = df.conf, aes(color = as.factor(z)), alpha = 0.5) + 
+  #geom_point(data = df[1:10, ], color = &#39;red&#39;) +
+  geom_path(data = df.path, color = &#39;red&#39;, arrow = arrow(length = unit(0.1, &quot;cm&quot;)))  </code></pre>
+<p><img src="gibbs-intro_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
+</div>
+
+
+
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
