@@ -285,6 +285,9 @@ $(document).ready(function () {
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
+  <a href="index.html">Home</a>
+</li>
+<li>
   <a href="metropolis-hastings.html">Intro to Metropolis-Hastings</a>
 </li>
 <li>
@@ -513,23 +516,8 @@ plt</code></pre>
 <hr />
 <p>The task is computationally challenging, we thus run the algorithm on a subsample only.</p>
 <pre class="r"><code>df &lt;- df[sample(1:n, 1000) , ] 
-MC.2 &lt;- MPGS.NIG(df$y, 2) #two modes</code></pre>
-<pre><code>## Loading required package: MCMCpack</code></pre>
-<pre><code>## Loading required package: coda</code></pre>
-<pre><code>## Loading required package: MASS</code></pre>
-<pre><code>## 
-## Attaching package: &#39;MASS&#39;</code></pre>
-<pre><code>## The following object is masked from &#39;package:dplyr&#39;:
-## 
-##     select</code></pre>
-<pre><code>## ##
-## ## Markov Chain Monte Carlo Package (MCMCpack)</code></pre>
-<pre><code>## ## Copyright (C) 2003-2021 Andrew D. Martin, Kevin M. Quinn, and Jong Hee Park</code></pre>
-<pre><code>## ##
-## ## Support provided by the U.S. National Science Foundation</code></pre>
-<pre><code>## ## (Grants SES-0350646 and SES-0350613)
-## ##</code></pre>
-<pre class="r"><code>MC.3 &lt;- MPGS.NIG(df$y, 3) #three modes
+MC.2 &lt;- MPGS.NIG(df$y, 2) #two modes
+MC.3 &lt;- MPGS.NIG(df$y, 3) #three modes
 MC.4 &lt;- MPGS.NIG(df$y, 4) #three modes</code></pre>
 <p>We can verify that the resulting Markov chains indeed seem to thoroughly sweep over the state space.</p>
 <p>Below, we compute the Bayes estimates and plot the fitted models on the histogram. <code>fit</code> is the respective Gaussian fit, by applying the Bayes estimates to the model equation.</p>

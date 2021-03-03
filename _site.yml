@@ -3,6 +3,8 @@ output_dir: "docs"
 navbar:
   title: "Intro to MCMC Methods"
   left:
+  - text: "Home"
+    href: index.html
   - text: "Intro to Metropolis-Hastings"
     href: metropolis-hastings.html
   - text: "Motivation for Gibbs"
