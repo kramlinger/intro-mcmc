@@ -7,22 +7,16 @@ output:
   pdf_document: default
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-```
-
 ***
 
-This is a short tutorial introducing the principles of MCMC methodology using \texttt{R} examples. 
-First, we discuss the [Metropolis-Hastings algorithm](...), motivate the [Gibbs Sampler](...) 
+This is a short tutorial introducing the principles of MCMC methodology using R examples. 
+First, the Metropolis-Hastings algorithm is introduced. 
+Then, the Gibbs Sampler is motivated using its relation to the slice sampler. 
+Some additional examples on credible interval estimation are also provided. 
+The examples are concluded with two case studies on relevant applications of the Gibbs Sampler: The use on a mixture model and its implementation as hybrid Gibbs sampler. 
 
-
-This document gives an example on the implementation of a Gibbs sampler in a mixture model using completion. 
-The data has been gathered from Ani Kannal from  [Kaggle](https://www.kaggle.com/anikannal/solar-power-generation-data). 
-It is merely a calculation example and not intended for interpretation. 
-A detailed derivation and discussion of the problem is given in Robert \& Casella (2004): Monte Carlo Statistical Methods. 
-
-***
+These pages are merely giving an impression on how to implement the aforementioned algorithms. 
+A detailed derivation, thorough discussion and a plethora of exercises and examples is given in Robert \& Casella (2004): Monte Carlo Statistical Methods. 
 
 
 ***

@@ -1,7 +1,4 @@
 ---
-title: "Introduction to the Metropolis-Hastings Algorithm"
-author: "Peter Kramlinger"
-date: "February 12th, 2021"
 ---
 
 ```{r setup, include=FALSE}

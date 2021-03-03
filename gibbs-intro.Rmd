@@ -1,7 +1,4 @@
 ---
-title: "Motivation for Gibbs Sampling"
-author: "Peter Kramlinger"
-date: "March 1st, 2021"
 ---
 
 ```{r setup, include=FALSE}

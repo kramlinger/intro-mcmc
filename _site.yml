@@ -1,7 +1,7 @@
 name: "intro-mcmc"
 output_dir: "docs"
 navbar:
-  title: "Intro to MCMC Methods"
+  title: ""
   left:
   - text: "Home"
     href: index.html

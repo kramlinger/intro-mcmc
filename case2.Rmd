@@ -1,7 +1,4 @@
 ---
-title: "Case Study II: Hybrid Gibbs and Credible Interval Estimation"
-author: "Peter Kramlinger"
-date: "March 2nd, 2021"
 ---
 
 ```{r setup, include=FALSE}
@@ -11,7 +8,7 @@ knitr::opts_chunk$set(echo = TRUE)
 ***
 
 This document gives an example on the implementation of a hybrid Gibbs Sampler and a variety of MCMC based credible interval estimators. 
-It is based on data gathered from [FiveThirtyEight](https://projects.fivethirtyeight.com/polls/florida/). 
+It is based on data gathered from [FiveThirtyEight](https://projects.fivethirtyeight.com/polls/florida/) and made available [here](https://github.com/kramlinger/intro-mcmc/blob/main/florida.csv ).  
 The problem is motivated by Scott M. Lynch (2007): Introduction to Applied Bayesian Statistics and Estimation for Social Scientists, Chapter 9. 
 
 ***

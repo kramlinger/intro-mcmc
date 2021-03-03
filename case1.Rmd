@@ -1,7 +1,4 @@
 ---
-title: "Case Study I: Mixture Posterior Simulation"
-author: "Peter Kramlinger"
-date: "March 2nd, 2021"
 ---
 
 ```{r setup, include=FALSE}
