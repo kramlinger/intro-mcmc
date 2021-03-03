@@ -1,4 +1,6 @@
 ---
+title: "Case Study II: Hybrid Gibbs and Credible Interval Estimation"
+
 ---
 
 ```{r setup, include=FALSE}

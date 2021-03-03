@@ -1,4 +1,5 @@
 ---
+title: "Case Study I: Mixture Posterior Simulation"
 ---
 
 ```{r setup, include=FALSE}
@@ -157,7 +158,8 @@ Z[i] <- sum(runif(1) > cumsum(pvec)) + 1
 #### Normal-Inverse-Gamma Hierarchy
 
 We provide an example of such an algorithm. 
-Consider the data set `Plant_1_Generation_Data.csv` on energy production of a solar plant in India. 
+Consider the data set `Plant_1_Generation_Data.csv` on energy production of a solar plant in India available here
+[here](https://github.com/kramlinger/intro-mcmc/blob/main/Plant_1_Generation_Data.csv). 
 We are interested in the total yield of the plant, given by variable `TOTAL_YIELD`, which we assume to be distributed by a mixture of Gaussians: 
 
 ```{r, warning=F, message =F}

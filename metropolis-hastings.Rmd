@@ -1,4 +1,5 @@
 ---
+title: "Introduction to the Metropolis-Hastings Algorithm"
 ---
 
 ```{r setup, include=FALSE}

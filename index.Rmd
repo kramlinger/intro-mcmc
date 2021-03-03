@@ -1,10 +1,9 @@
 ---
-title: "Introduction to MCMC Methodology in Bayesian Statistics"
+title: "MCMC Examples for Bayesian Statistics"
 author: "Peter Kramlinger"
 date: "March 3rd, 2021"
 output:
   html_document: default
-  pdf_document: default
 ---
 
 ***
@@ -13,7 +12,7 @@ This is a short tutorial introducing the principles of MCMC methodology using R 
 First, the Metropolis-Hastings algorithm is introduced. 
 Then, the Gibbs Sampler is motivated using its relation to the slice sampler. 
 Some additional examples on credible interval estimation are also provided. 
-The examples are concluded with two case studies on relevant applications of the Gibbs Sampler: The use on a mixture model and its implementation as hybrid Gibbs sampler. 
+They are concluded with two case studies on relevant applications of the Gibbs Sampler: The use on a mixture model and its implementation as hybrid Gibbs sampler. 
 
 These pages are merely giving an impression on how to implement the aforementioned algorithms. 
 A detailed derivation, thorough discussion and a plethora of exercises and examples is given in Robert \& Casella (2004): Monte Carlo Statistical Methods. 

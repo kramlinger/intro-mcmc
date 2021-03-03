@@ -11,7 +11,7 @@
 
 
 
-<title>case1.utf8</title>
+<title>Case Study I: Mixture Posterior Simulation</title>
 
 <script src="site_libs/header-attrs-2.5/header-attrs.js"></script>
 <script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
@@ -313,12 +313,11 @@ $(document).ready(function () {
 
 
 
+<h1 class="title toc-ignore">Case Study I: Mixture Posterior Simulation</h1>
 
 </div>
 
 
-<div id="section" class="section level2">
-<h2>—</h2>
 <hr />
 <p>This document gives an example on the implementation of a Gibbs sampler in a mixture model using completion. The data has been gathered from Ani Kannal from <a href="https://www.kaggle.com/anikannal/solar-power-generation-data">Kaggle</a>. It is merely a calculation example and not intended for interpretation. A detailed derivation and discussion of the problem is given in Robert &amp; Casella (2004): Monte Carlo Statistical Methods.</p>
 <hr />
@@ -528,7 +527,6 @@ plt + geom_line(data = df, aes(x, value, color = variable)) +
   scale_color_discrete(name = &quot;&quot;, labels = c(&quot;k=2&quot;, &quot;k=3&quot;, &quot;k=4&quot;))</code></pre>
 <p><img src="case1_files/figure-html/unnamed-chunk-10-1.png" width="672" /></p>
 <p>While the MCMC Bayes estimates produce good fits in the model framework, the tail behavior indicates that a Gaussian assumption is unjustified in the first place.</p>
-</div>
 </div>
 
 

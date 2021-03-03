@@ -11,7 +11,7 @@
 
 
 
-<title>case2.utf8</title>
+<title>Case Study II: Hybrid Gibbs and Credible Interval Estimation</title>
 
 <script src="site_libs/header-attrs-2.5/header-attrs.js"></script>
 <script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
@@ -313,12 +313,11 @@ $(document).ready(function () {
 
 
 
+<h1 class="title toc-ignore">Case Study II: Hybrid Gibbs and Credible Interval Estimation</h1>
 
 </div>
 
 
-<div id="section" class="section level2">
-<h2>—</h2>
 <hr />
 <p>This document gives an example on the implementation of a hybrid Gibbs Sampler and a variety of MCMC based credible interval estimators. It is based on data gathered from <a href="https://projects.fivethirtyeight.com/polls/florida/">FiveThirtyEight</a> and made available <a href="https://github.com/kramlinger/intro-mcmc/blob/main/florida.csv">here</a>.<br />
 The problem is motivated by Scott M. Lynch (2007): Introduction to Applied Bayesian Statistics and Estimation for Social Scientists, Chapter 9.</p>
@@ -535,7 +534,6 @@ tbl1</code></pre>
 ggplot() + theme_classic() + geom_histogram(aes(p, ..density..), bins = 100) +
   labs(y = unname(TeX(&quot;$\\hat{\\pi}(p|x)$&quot;)))</code></pre>
 <p><img src="case2_files/figure-html/unnamed-chunk-10-1.png" width="672" /></p>
-</div>
 </div>
 
 

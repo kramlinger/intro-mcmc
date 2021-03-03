@@ -1,4 +1,5 @@
 ---
+title: "MCMC Credible Interval Estimation"
 ---
 
 ```{r setup, include=FALSE}
