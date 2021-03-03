@@ -401,7 +401,7 @@ Z[i] &lt;- sum(runif(1) &gt; cumsum(pvec)) + 1</code></pre>
 </div>
 <div id="normal-inverse-gamma-hierarchy" class="section level4">
 <h4>Normal-Inverse-Gamma Hierarchy</h4>
-<p>We provide an example of such an algorithm. Consider the data set <code>Plant_1_Generation_Data.csv</code> on energy production of a solar plant in India. We are interested in the total yield of the plant, given by variable <code>TOTAL_YIELD</code>, which we assume to be distributed by a mixture of Gaussians:</p>
+<p>We provide an example of such an algorithm. Consider the data set <code>Plant_1_Generation_Data.csv</code> on energy production of a solar plant in India available here <a href="https://github.com/kramlinger/intro-mcmc/blob/main/Plant_1_Generation_Data.csv">here</a>. We are interested in the total yield of the plant, given by variable <code>TOTAL_YIELD</code>, which we assume to be distributed by a mixture of Gaussians:</p>
 <pre class="r"><code># read data 
 df &lt;- read.csv(file = &quot;Plant_1_Generation_Data.csv&quot;)
 n &lt;- length(df$TOTAL_YIELD)
