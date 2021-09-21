@@ -16,7 +16,7 @@ The theoretical derivation, involved examples and applications can be found in R
 
 We aim to obtain a sample from $f$ without directly drawing from it. 
 The Metropolis-Hastings algorithm generates such a sample by drawing from the proposal density $g$ instead. 
-The generated sample will be accepted with probability \texttt{rho}. 
+The generated sample will be accepted with probability $\texttt{rho}$. 
 The proposal density can be chosen freely and its best if it is easy to simulate from $g$. 
 The algorithm is given by:
 
