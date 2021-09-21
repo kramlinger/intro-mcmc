@@ -321,7 +321,7 @@ $(document).ready(function () {
 <hr />
 <p>This document provides a gentle introduction to implementing Metropolis-Hastings algorithms. It is intended to give a basic understanding on fundamental principles. The theoretical derivation, involved examples and applications can be found in Robert &amp; Casella (2004): Monte Carlo Statistical Methods.</p>
 <hr />
-<p>We aim to obtain a sample from <span class="math inline">\(f\)</span> without directly drawing from it. The Metropolis-Hastings algorithm generates such a sample by drawing from the proposal density <span class="math inline">\(g\)</span> instead. The generated sample will be accepted with probability <span class="math inline">\(\texttt{rho}\)</span>. The proposal density can be chosen freely and its best if it is easy to simulate from <span class="math inline">\(g\)</span>. The algorithm is given by:</p>
+<p>We aim to obtain a sample from <span class="math inline">\(f\)</span> without directly drawing from it. The Metropolis-Hastings algorithm generates such a sample by drawing from the proposal density <span class="math inline">\(g\)</span> instead. The generated sample will be accepted with probability <code>rho</code>. The proposal density can be chosen freely and its best if it is easy to simulate from <span class="math inline">\(g\)</span>. The algorithm is given by:</p>
 <pre class="r"><code>f &lt;- function(x) ... #target density
 q &lt;- function(y,x) ... #proposal density, easy to sample from
 rho &lt;- function(x, y) f(y) / f(x) * q(y,x) / q(y,x) #acceptance probability
@@ -359,7 +359,7 @@ for (i in 1:n) {
 # show empirical and theoretical means
 data.frame(empirical = mean(X), theoretical = alpha0/beta0)</code></pre>
 <pre><code>##   empirical theoretical
-## 1 0.6924336   0.6935484</code></pre>
+## 1 0.6932973   0.6935484</code></pre>
 <pre class="r"><code># visualize
 require(&#39;ggplot2&#39;)
 x &lt;- seq(0, 3, l = 1e3)
@@ -381,7 +381,7 @@ Y &lt;- rexp(n, 1) # draw from proposal </code></pre>
 <pre class="r"><code>X &lt;- c(234) # absurd initial value</code></pre>
 <p>Running the code gives:</p>
 <pre><code>##   empirical theoretical
-## 1  0.695811   0.6935484</code></pre>
+## 1  0.693696   0.6935484</code></pre>
 <p><img src="metropolis-hastings_files/figure-html/GammaExpIndMHm-1.png" width="672" /></p>
 <p>Although both the initial value lies at the tail of the target density <span class="math inline">\(f\)</span> (red) and the proposal <span class="math inline">\(g\)</span> (blue) differs from <span class="math inline">\(f\)</span>, the generated sample captures the characteristics of the target well.</p>
 <p>Naturally, using the <span class="math inline">\(Exp(1)\)</span> as proposal leads to much more generated samples being rejected than before. The shape of the proposal is crucial in the efficiency of the algorithm.</p>
