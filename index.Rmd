@@ -1,6 +1,6 @@
 ---
 title: "MCMC Examples for Bayesian Statistics"
-author: "Peter Kramlinger"
+author: "[Peter Kramlinger](https://kramlinger.github.io/)"
 date: "March 3rd, 2021"
 output:
   html_document: default
